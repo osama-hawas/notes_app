@@ -12,13 +12,13 @@ class CustomFloatingActionButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(40),
-        color: textFieldColor,
+        color: kPrimiryColor,
       ),
       child: IconButton(
         onPressed: () {
           showModelBottomSheet(context);
         },
-        icon: Icon(
+        icon:const Icon(
           Icons.add,
           color: Colors.black,
           size: 32,

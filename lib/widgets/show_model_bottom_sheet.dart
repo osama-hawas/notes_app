@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/cubits/add_note_cubit/add_note_cubit.dart';
 
-import '../constants/strings.dart';
-import 'custom_text_field.dart';
+import '../cubits/note_view_cubit/note_view_cubit.dart';
+import 'add_note_form_state.dart';
 
 Future<dynamic> showModelBottomSheet(BuildContext context) {
   return showModalBottomSheet(
@@ -12,60 +14,31 @@ Future<dynamic> showModelBottomSheet(BuildContext context) {
         topRight: Radius.circular(32),
       ),
     ),
+    isScrollControlled: true,
     builder: (context) {
-      return SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: [
-              CustomTextField(
-                hintText: 'title',
-                maxLine: 1,
-              ),
-              CustomTextField(hintText: 'content', maxLine: 5),
-              CustomButtom(
-                onTap: () {},
-                textButtom: 'Add',
-              ),
-              SizedBox(
-                height: 16,
-              ),
-            ],
-          ),
-        ),
+      return BlocConsumer<AddNoteCubit, AddNoteState>(
+        listener: (context, state) {
+          if (state is AddNoteSuccess) {
+            BlocProvider.of<NoteViewCubit>(context).getAllNote();
+            Navigator.pop(context);
+          }
+
+          if (state is AddNoteFailure) {
+            print('Failed');
+          }
+        },
+        builder: (context, state) {
+          return AbsorbPointer(
+            absorbing: state is AddNoteLoading ? true : false,
+            child: SingleChildScrollView(
+              child: Padding(
+                  padding: EdgeInsetsDirectional.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: const AddNoteFormState()),
+            ),
+          );
+        },
       );
     },
   );
-}
-
-class CustomButtom extends StatelessWidget {
-  VoidCallback? onTap;
-  String textButtom;
-  CustomButtom({required this.textButtom, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 64, right: 64, top: 32),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32),
-            color: textFieldColor,
-          ),
-          width: double.infinity,
-          height: 50,
-          child: Center(
-            child: Text(
-              textButtom,
-              style: TextStyle(
-                color: Color(0xff2b475e),
-                fontSize: 22,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }

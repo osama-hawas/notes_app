@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 import '../constants/strings.dart';
@@ -7,20 +5,34 @@ import '../constants/strings.dart';
 class CustomTextField extends StatelessWidget {
   final String hintText;
   final int maxLine;
-
-  const CustomTextField({required this.hintText, required this.maxLine});
+  void Function(String?)? onSaved;
+  CustomTextField(
+      {required this.hintText,
+      required this.maxLine,
+      required this.onSaved,
+      this.onChanged});
+  final Function(String)? onChanged;
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 40),
-      child: TextField(
-        cursorColor: textFieldColor,
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 30),
+      child: TextFormField(
+        onChanged: onChanged,
+        onSaved: onSaved,
+        validator: (value) {
+          if (value?.isEmpty ?? true) {
+            return 'Field is requird';
+          } else {
+            return null;
+          }
+        },
+        cursorColor: kPrimiryColor,
         cursorHeight: 20,
         maxLines: maxLine,
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
             color: Colors.white,
           ),
           enabledBorder: outLineInputBorder(),
@@ -34,8 +46,8 @@ class CustomTextField extends StatelessWidget {
   OutlineInputBorder outLineInputBorder() {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: textFieldColor,
+      borderSide: const BorderSide(
+        color: kPrimiryColor,
       ),
     );
   }

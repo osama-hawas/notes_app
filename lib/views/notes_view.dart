@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:notes_app/models/note_model.dart';
 
+import '../constants/strings.dart';
+import '../cubits/note_view_cubit/note_view_cubit.dart';
 import '../widgets/custom_abb_bar.dart';
 import '../widgets/custom_floating_action_button.dart';
 import '../widgets/note_view_item.dart';
@@ -18,7 +22,7 @@ class NotesView extends StatelessWidget {
               textTitle: 'Notes',
               iconButton: IconButton(
                 onPressed: () {},
-                icon: Icon(
+                icon: const Icon(
                   Icons.search,
                   size: 28,
                 ),
@@ -26,18 +30,28 @@ class NotesView extends StatelessWidget {
             )
           ];
         },
-        body: GridView.builder(
-          padding: EdgeInsets.zero,
-          itemCount: 10,
-          clipBehavior: Clip.none,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1, childAspectRatio: 1.7),
-          itemBuilder: (contex, index) {
-            return NoteViewItem();
+        body: BlocBuilder<NoteViewCubit, NoteViewState>(
+          builder: (context, state) {
+            List<NoteModel> notes =
+                Hive.box<NoteModel>(kNotesBox).values.toList();
+            return ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: Hive.box<NoteModel>(kNotesBox).values.length,
+              clipBehavior: Clip.none,
+              itemBuilder: (contex, index) {
+                return NoteViewItem(
+                  noteModel: notes[index],
+                );
+              },
+            );
           },
         ),
       ),
-      floatingActionButton: CustomFloatingActionButton(),
+      floatingActionButton: const CustomFloatingActionButton(),
     );
   }
 }
+
+
+
+//  
